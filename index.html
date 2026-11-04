@@ -479,7 +479,12 @@ function openMail(subject,title,text){
   $("mTitle").textContent=title; $("mText").textContent=text;
   $("mMail").href=`mailto:${MAIL}?subject=${s}`; $("mWrite").href=`mailto:${MAIL}?subject=${s}`;
   $("mGmail").href=`https://mail.google.com/mail/?view=cm&fs=1&to=${MAIL}&su=${s}`;
-  overlay.hidden=false; $("mGmail").focus();
+  // En celulares el link mailto abre la app de correo (Gmail en Android); Gmail web solo en computadora
+  const mobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  $("mGmail").hidden=mobile;
+  $("mWrite").textContent=mobile?"Escribir mail":"Abrir app de correo";
+  $("mWrite").classList.toggle("primary",mobile);
+  overlay.hidden=false; (mobile?$("mWrite"):$("mGmail")).focus();
 }
 function maybeAlert(){const q=qEl.value.trim();if(q.length<3||q===lastShown)return;
   if(search(q).length===0){lastShown=q;openMail("Consulta: "+q,"No encontramos un servicio para tu búsqueda","Escribinos contando qué necesitás y te ponemos en contacto con el área que puede ayudarte.")}}
